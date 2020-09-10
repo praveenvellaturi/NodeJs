@@ -1,22 +1,50 @@
-const express =require('express');
+//we can also use var or let in place of const
+const express = require('express');
 const { ROUTE_CONSTANTS } = require('./helpers/route_constants');
-const bodyParser = require('body-parser');
-const app = express();
-app.use(bodyParser.urlencoded({extended:false}))
+const app=express();
+//adding body parser
+const bodyParser=require('body-parser');
+const { request } = require('express');
+//adding async reuest
+const asyncRequest = require('async-request');
+const countryListUrl= 'https://restcountries.eu/rest/v2/all';
+//const countryListUrl=' https://api.github.com/users';
+//syntax : route, callback function
+app.get(ROUTE_CONSTANTS.GET_COUNTRIES,async function(req,res){
+try{
+const response= await asyncRequest(countryListUrl);
+res.json(response);
+}
+catch(err){
+res.json(err);
+}
+});
+app.use(bodyParser.urlencoded({extended: false}));
+//parse application/ json
 app.use(bodyParser.json());
-app.get(ROUTE_CONSTANTS.DEFAULT,function(req,res){
-res.send("<h1>welcome to pega</h1>")
-})
+app.get(ROUTE_CONSTANTS.DEFAULT, function(req,res){
+res.send("<h1>Welcome to Default Page</h1>");
+});
 app.get(ROUTE_CONSTANTS.GET_LOGIN,function(req,res){
-    res.sendFile(__dirname+'/pages/login.html')
-})
-app.get(ROUTE_CONSTANTS.GET_REGISTER,function(req,res){
-    res.sendFile(__dirname+'/pages/register.html')
-})
-app.post(ROUTE_CONSTANTS.POST_LOGIN,function(req,res){
+  res.sendFile(__dirname+'/pages/login.html');
+  });
+  // Here we added a new post function.
+  app.post(ROUTE_CONSTANTS.POST_LOGIN,function(req,res){
+  console.log(req.body);
+  res.send("Logged In");
+  });
+  app.get(ROUTE_CONSTANTS.GET_REGISTER,function(req,res){
+    res.sendFile(__dirname+'/pages/register.html');
+    });
+    app.post(ROUTE_CONSTANTS.POST_REGISTER,function(req,res){
     console.log(req.body);
-    res.send("successfully logged in");
-})
+    res.send("Successfully registered.");
+    });
+    
+    app.get(ROUTE_CONSTANTS.GET_FILE,function(req,res){
+      res.sendFile(__dirname+"/files/demo.pdf");
+      }); 
+     
 app.get(ROUTE_CONSTANTS.GET_PRODUCTS,function(req,res){
     const productsData=[
         [
